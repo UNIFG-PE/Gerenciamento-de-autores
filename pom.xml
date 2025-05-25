@@ -1,0 +1,47 @@
+<project>
+    <!-- Versão do modelo do POM utilizada pelo Maven -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Identificador do grupo (pacote base) do projeto -->
+    <groupId>com.example</groupId>
+
+    <!-- Nome do artefato (nome do projeto/arquivo gerado) -->
+    <artifactId>my-jdbc-app</artifactId>
+
+    <!-- Versão do projeto -->
+    <version>1.0</version>
+
+    <properties>
+        <!-- Versão do Java utilizada para compilar o projeto -->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- Dependência do driver JDBC do MariaDB (também funciona para MySQL) -->
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.1.4</version> <!-- Versão do driver JDBC -->
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- Diretório de onde o Maven vai compilar os arquivos fonte -->
+        <sourceDirectory>src</sourceDirectory>
+
+        <plugins>
+            <!-- Plugin pra executar o código Java diretamente pelo Maven -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+
+                <configuration>
+                    <!-- Nome da classe principal com o método 'main' -->
+                    <mainClass>Main</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
