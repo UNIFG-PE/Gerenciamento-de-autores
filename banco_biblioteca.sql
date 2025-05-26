@@ -6,5 +6,8 @@ USE biblioteca;
 CREATE TABLE IF NOT EXISTS autores (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    informacoes TEXT
+    informacoes TEXT,
+    livros JSON
 );
+
+

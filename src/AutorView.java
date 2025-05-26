@@ -1,5 +1,10 @@
 
 import javax.swing.*;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.awt.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
@@ -7,103 +12,123 @@ import java.util.List;
 
 //Classe de interface gráfica p/ gerenciar os autores
 public class AutorView extends JFrame {
-	
- // Campos de texto e área de exibição
- private JTextField txtNome, txtInfo;
- private JTextArea txtLista;
- private AutorDAO autorDAO; // Objeto responsável pela comunicação com o banco
 
- // Construtor que recebe uma conexão com o banco de dados
- public AutorView(Connection conn) {
-     // Inicializa o DAO com a conexão recebida
-     this.autorDAO = new AutorDAO(conn);
+    // Campos de texto e área de exibição
+    private JTextField txtNome, txtInfo, txtLivros;
+    private JTextArea txtLista;
+    private AutorDAO autorDAO; // Objeto responsável pela comunicação com o banco
 
-     // Define título, o tamanho e o Layout principal como BorderLayout
-     setTitle("Gerenciamento de Autores");
-     setSize(500, 400);
-     setLayout(new BorderLayout());
+    // Construtor que recebe uma conexão com o banco de dados
+    public AutorView(Connection conn) {
+        // Inicializa o DAO com a conexão recebida
+        this.autorDAO = new AutorDAO(conn);
 
-     // Cria painel com layout em grade para o formulário
-     JPanel painelForm = new JPanel(new GridLayout(3, 2));
+        // Define título, o tamanho e o Layout principal como BorderLayout
+        setTitle("Gerenciamento de Autores");
+        setSize(500, 400);
+        setLayout(new BorderLayout());
 
-     // Add campo para:
-     painelForm.add(new JLabel("Nome:"));  //nome do autor
-     txtNome = new JTextField();
-     painelForm.add(txtNome);
+        // Cria painel com layout em grade para o formulário
+        JPanel painelForm = new JPanel(new GridLayout(4, 2));
 
-    
-     painelForm.add(new JLabel("Informações:")); // informações do autor
-     txtInfo = new JTextField();
-     painelForm.add(txtInfo);
+        // Add campo para:
+        painelForm.add(new JLabel("Nome:")); // nome do autor
+        txtNome = new JTextField();
+        painelForm.add(txtNome);
 
-     // Botão para:
-     JButton btnAdicionar = new JButton("Adicionar Autor"); //add autor
-     painelForm.add(btnAdicionar);
+        painelForm.add(new JLabel("Informações:")); // informações do autor
+        txtInfo = new JTextField();
+        painelForm.add(txtInfo);
 
-   
-     JButton btnAtualizar = new JButton("Atualizar Lista"); //atualizar a lista de autores exibida
-     painelForm.add(btnAtualizar);
+        painelForm.add(new JLabel("Livros:")); // informações do autor
+        txtLivros = new JTextField();
+        painelForm.add(txtLivros);
+        // Botão para:
+        JButton btnAdicionar = new JButton("Adicionar Autor"); // add autor
+        painelForm.add(btnAdicionar);
 
-     // Add painel de formulário na parte superior da janela
-     add(painelForm, BorderLayout.NORTH);
+        JButton btnAtualizar = new JButton("Atualizar Lista"); // atualizar a lista de autores exibida
+        painelForm.add(btnAtualizar);
 
-     // Área de texto p/ exibir a lista de autores cadastrados
-     txtLista = new JTextArea();
+        // Add painel de formulário na parte superior da janela
+        add(painelForm, BorderLayout.NORTH);
 
-     // Add a área de texto com barra de rolagem ao centro da janela
-     add(new JScrollPane(txtLista), BorderLayout.CENTER);
+        // Área de texto p/ exibir a lista de autores cadastrados
+        txtLista = new JTextArea();
 
-     // Define ações dos botões usando expressões lambda
-     btnAdicionar.addActionListener(e -> adicionarAutor());
-     btnAtualizar.addActionListener(e -> listarAutores());
+        // Add a área de texto com barra de rolagem ao centro da janela
+        add(new JScrollPane(txtLista), BorderLayout.CENTER);
 
-     // Chama o método que lista os autores assim que a tela abre
-     listarAutores();
+        // Define ações dos botões usando expressões lambda
+        btnAdicionar.addActionListener(e -> adicionarAutor());
+        btnAtualizar.addActionListener(e -> listarAutores());
 
-     // Define o comportamento ao fechar a janela
-     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Chama o método que lista os autores assim que a tela abre
+        listarAutores();
 
-     // Torna a janela visível
-     setVisible(true);
- }
+        // Define o comportamento ao fechar a janela
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
- // Método que cria e salva um novo autor com os dados informados
- private void adicionarAutor() {
-     try {
-         // Cria objeto Autor com os dados dos campos
-         Autor autor = new Autor(txtNome.getText(), txtInfo.getText());
+        // Torna a janela visível
+        setVisible(true);
+    }
 
-         // Salva o autor no banco de dados
-         autorDAO.adicionarAutor(autor);
+    // Método que cria e salva um novo autor com os dados informados
+    private void adicionarAutor() {
+        try {
+            // Cria objeto Autor com os dados dos campos
+            String jsonLivros = txtLivros.getText().trim();
 
-         // Mostra mensagem de sucesso
-         JOptionPane.showMessageDialog(this, "Autor adicionado com sucesso!");
+            // Converter JSON string para String[] usando ObjectMapper
+            ObjectMapper objectMapper = new ObjectMapper();
+            String[] livros = objectMapper.readValue(jsonLivros, String[].class);
+            Autor autor = new Autor(txtNome.getText(), txtInfo.getText(), livros);
 
-         // Atualiza a lista de autores
-         listarAutores();
-     } catch (SQLException e) {
-         e.printStackTrace();
-         JOptionPane.showMessageDialog(this, "Erro ao adicionar autor.");
-     }
- }
+            for (String livro : livros) {
+                System.out.println("l: " + livro);
+            }
+            // Salva o autor no banco de dados
+            autorDAO.adicionarAutor(autor);
 
- // Método que consulta e exibe todos os autores cadastrados
- private void listarAutores() {
-     try {
-         // Obtém a lista de autores do banco
-         List<Autor> autores = autorDAO.listarAutores();
+            // Mostra mensagem de sucesso
+            JOptionPane.showMessageDialog(this, "Autor adicionado com sucesso!");
 
-         // Limpa o conteúdo da área de exibição
-         txtLista.setText("");
+            // Atualiza a lista de autores
+            listarAutores();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao adicionar autor.");
+        }
+    }
 
-         // Percorre a lista e exibe os dados de cada autor
-         for (Autor autor : autores) {
-             txtLista.append("ID: " + autor.getId() + " | Nome: " + autor.getNome() + " | Info: "
-                     + autor.getInformacoes() + "\n");
-         }
-     } catch (SQLException e) {
-         e.printStackTrace();
-         txtLista.setText("Erro ao listar autores.");
-     }
- }
+    // Método que consulta e exibe todos os autores cadastrados
+    private void listarAutores() {
+        try {
+            // Obtém a lista de autores do banco
+            List<Autor> autores = autorDAO.listarAutores();
+
+            // Limpa o conteúdo da área de exibição
+            txtLista.setText("");
+
+            // Percorre a lista e exibe os dados de cada autor
+            for (Autor autor : autores) {
+                String livrosStr = "";
+                if (autor.getLivros() != null && autor.getLivros().length > 0) {
+                    livrosStr = " | Livros: ";
+                    for (int i = 0; i < autor.getLivros().length; i++) {
+                        livrosStr += autor.getLivros()[i];
+                        if (i < autor.getLivros().length - 1) {
+                            livrosStr += ", ";
+                        }
+                    }
+                }
+
+                txtLista.append("ID: " + autor.getId() + " | Nome: " + autor.getNome() + " | Info: "
+                        + autor.getInformacoes() + livrosStr + "\n");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            txtLista.setText("Erro ao listar autores.");
+        }
+    }
 }
