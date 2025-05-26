@@ -2,7 +2,8 @@
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class Autor {
+public class
+Autor {
     // Identificador único do autor - usado para atualizações e exclusões
     private int id;
     private String nome; // Nome do autor

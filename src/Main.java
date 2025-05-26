@@ -13,9 +13,6 @@ public class Main {
         System.out.println("working");
 
         try {
-            String json = "[\"hello bob\", \"i am bob\"]";
-            ObjectMapper objectMapper = new ObjectMapper();
-            String[] livros = objectMapper.readValue(json, String[].class);
             // Utils.json_to_string_array();
             // Indica que está prestes a conectar no banco
             System.out.println("gonig to connect");
