@@ -21,7 +21,7 @@ public class Main {
             // Porta 3307 (ajustado conforme seu ambiente), banco: biblioteca, usuário:
             // root, senha: senha
             Connection conn = DriverManager.getConnection(
-                    "jdbc:mariadb://localhost:3307/biblioteca", "root", "senha");
+                    "jdbc:mariadb://localhost:3307/biblioteca", "root", "pao36");
 
             // Confirma que a conexão foi estabelecida com sucesso
             System.out.println("connection success");

@@ -10,13 +10,34 @@ import java.awt.event.*;
 import java.sql.*;
 import java.util.List;
 
+class TextWithButton extends JPanel {
+    public TextWithButton(AutorView parent, String text, int id) {
+        setLayout(new BorderLayout());
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, 40)); // for consistent row height
+
+        JLabel label = new JLabel(text);
+        JButton button = new JButton("X");
+        button.addActionListener(e-> {
+        	parent.autorDAO.removerAutor(id);
+        	parent.listarAutores();	
+        })
+        button.setForeground(Color.WHITE);
+        button.setBackground(Color.RED);
+
+        // Optional: remove focus outline
+        button.setFocusPainted(false);
+
+        add(label, BorderLayout.WEST);
+        add(button, BorderLayout.EAST);
+    }
+}
 //Classe de interface gráfica p/ gerenciar os autores
 public class AutorView extends JFrame {
 
     // Campos de texto e área de exibição
     private JTextField txtNome, txtInfo, txtLivros;
-    private JTextArea txtLista;
-    private AutorDAO autorDAO; // Objeto responsável pela comunicação com o banco
+    private JPanel listPanel;
+    public AutorDAO autorDAO; // Objeto responsável pela comunicação com o banco
 
     // Construtor que recebe uma conexão com o banco de dados
     public AutorView(Connection conn) {
@@ -54,10 +75,12 @@ public class AutorView extends JFrame {
         add(painelForm, BorderLayout.NORTH);
 
         // Área de texto p/ exibir a lista de autores cadastrados
-        txtLista = new JTextArea();
+        JPanel listPanel = new JPanel();
+        listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
+        // txtLista = new JTextArea();
 
         // Add a área de texto com barra de rolagem ao centro da janela
-        add(new JScrollPane(txtLista), BorderLayout.CENTER);
+        add(new JScrollPane(listPanel), BorderLayout.CENTER);
 
         // Define ações dos botões usando expressões lambda
         btnAdicionar.addActionListener(e -> adicionarAutor());
@@ -84,9 +107,6 @@ public class AutorView extends JFrame {
             String[] livros = objectMapper.readValue(jsonLivros, String[].class);
             Autor autor = new Autor(txtNome.getText(), txtInfo.getText(), livros);
 
-            for (String livro : livros) {
-                System.out.println("l: " + livro);
-            }
             // Salva o autor no banco de dados
             autorDAO.adicionarAutor(autor);
 
@@ -102,13 +122,14 @@ public class AutorView extends JFrame {
     }
 
     // Método que consulta e exibe todos os autores cadastrados
-    private void listarAutores() {
+    public void listarAutores() {
         try {
             // Obtém a lista de autores do banco
             List<Autor> autores = autorDAO.listarAutores();
 
             // Limpa o conteúdo da área de exibição
-            txtLista.setText("");
+            //txtLista.setText("");
+            
 
             // Percorre a lista e exibe os dados de cada autor
             for (Autor autor : autores) {
@@ -122,13 +143,13 @@ public class AutorView extends JFrame {
                         }
                     }
                 }
-
-                txtLista.append("ID: " + autor.getId() + " | Nome: " + autor.getNome() + " | Info: "
-                        + autor.getInformacoes() + livrosStr + "\n");
+                String texto = "ID: " + autor.getId() + " | Nome: " + autor.getNome() + " | Info: "
+                        + autor.getInformacoes() + livrosStr;
+                listPanel.add(new TextWithButton(this, texto, autor.getId()));
+              
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            txtLista.setText("Erro ao listar autores.");
         }
     }
 }

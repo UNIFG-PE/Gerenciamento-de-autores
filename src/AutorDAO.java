@@ -78,6 +78,8 @@ public class AutorDAO {
             stmt.executeUpdate(); // Executa a atualização
         }
     }
+    
+  
 
     // Remove um autor do banco com base no ID
 
