@@ -1,0 +1,5 @@
+target/
+adminer*
+.settings/
+.project
+.classpath
