@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 class TextWithButton extends JPanel {
@@ -17,10 +18,11 @@ class TextWithButton extends JPanel {
 
         JLabel label = new JLabel(text);
         JButton button = new JButton("X");
-        button.addActionListener(e-> {
-        	parent.autorDAO.removerAutor(id);
-        	parent.listarAutores();	
-        })
+        button.addActionListener(e -> {
+
+            // parent.autorDAO.removerAutor(id);
+            // parent.listarAutores();
+        });
         button.setForeground(Color.WHITE);
         button.setBackground(Color.RED);
 
@@ -31,7 +33,8 @@ class TextWithButton extends JPanel {
         add(button, BorderLayout.EAST);
     }
 }
-//Classe de interface gráfica p/ gerenciar os autores
+
+// Classe de interface gráfica p/ gerenciar os autores
 public class AutorView extends JFrame {
 
     // Campos de texto e área de exibição
@@ -40,10 +43,12 @@ public class AutorView extends JFrame {
     public AutorDAO autorDAO; // Objeto responsável pela comunicação com o banco
 
     // Construtor que recebe uma conexão com o banco de dados
-    public AutorView(Connection conn) {
+    public AutorView(App app) {
         // Inicializa o DAO com a conexão recebida
-        this.autorDAO = new AutorDAO(conn);
-
+        if (!app.offline) {
+            this.autorDAO = new AutorDAO(app.con);
+        }
+        System.out.println("Author View");
         // Define título, o tamanho e o Layout principal como BorderLayout
         setTitle("Gerenciamento de Autores");
         setSize(500, 400);
@@ -83,11 +88,12 @@ public class AutorView extends JFrame {
         add(new JScrollPane(listPanel), BorderLayout.CENTER);
 
         // Define ações dos botões usando expressões lambda
-        btnAdicionar.addActionListener(e -> adicionarAutor());
-        btnAtualizar.addActionListener(e -> listarAutores());
-
+        if (!app.offline) {
+            btnAdicionar.addActionListener(e -> adicionarAutor(app));
+            btnAtualizar.addActionListener(e -> listarAutores(app));
+        }
         // Chama o método que lista os autores assim que a tela abre
-        listarAutores();
+        listarAutores(app);
 
         // Define o comportamento ao fechar a janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,7 +103,7 @@ public class AutorView extends JFrame {
     }
 
     // Método que cria e salva um novo autor com os dados informados
-    private void adicionarAutor() {
+    private void adicionarAutor(App app) {
         try {
             // Cria objeto Autor com os dados dos campos
             String jsonLivros = txtLivros.getText().trim();
@@ -114,7 +120,7 @@ public class AutorView extends JFrame {
             JOptionPane.showMessageDialog(this, "Autor adicionado com sucesso!");
 
             // Atualiza a lista de autores
-            listarAutores();
+            listarAutores(app);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao adicionar autor.");
@@ -122,14 +128,17 @@ public class AutorView extends JFrame {
     }
 
     // Método que consulta e exibe todos os autores cadastrados
-    public void listarAutores() {
+    public void listarAutores(App app) {
         try {
             // Obtém a lista de autores do banco
-            List<Autor> autores = autorDAO.listarAutores();
-
+            List<Autor> autores;
+            if (app.offline) {
+                autores = new ArrayList();
+            } else {
+                autores = autorDAO.listarAutores();
+            }
             // Limpa o conteúdo da área de exibição
-            //txtLista.setText("");
-            
+            // txtLista.setText("");
 
             // Percorre a lista e exibe os dados de cada autor
             for (Autor autor : autores) {
@@ -146,7 +155,7 @@ public class AutorView extends JFrame {
                 String texto = "ID: " + autor.getId() + " | Nome: " + autor.getNome() + " | Info: "
                         + autor.getInformacoes() + livrosStr;
                 listPanel.add(new TextWithButton(this, texto, autor.getId()));
-              
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
