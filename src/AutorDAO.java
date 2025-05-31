@@ -1,35 +1,39 @@
 
-// Importa classes p/ conexão com banco de dados e manipulação de listas
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-//Classe DAO responsável por realizar operações no banco de dados p/ a entidade Autor
-
 public class AutorDAO {
-    // Conexão com o banco de dados
-    private Connection conn;
+    private Connection connection;
 
-    // Construtor que recebe uma conexão como parâmetro
-    public AutorDAO(Connection conn) {
-        this.conn = conn;
+    public AutorDAO() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Erro");
+            e.printStackTrace();
+        }
+
+        try {
+            connection = DriverManager.getConnection(
+                    "jdbc:mysql://localhost:3307/biblioteca?useSSL=false&serverTimezone=UTC",
+                    "root",
+                    "senha"
+            );
+        } catch (SQLException e) {
+            System.out.println("Erro");
+            e.printStackTrace();
+        }
     }
 
-    // Insere um novo autor na tabela 'autores'
-
-    public void adicionarAutor(Autor autor) throws SQLException {
-        String sql = "INSERT INTO autores (nome, informacoes, livros) VALUES (?, ?, ?)";
-
-        // Usa PreparedStatement para evitar SQL Injection e definir os parâmetros
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, autor.getNome()); // Define o nome no primeiro parâmetro
-            stmt.setString(2, autor.getInformacoes()); // Define as informações no segundo parâmetro
-            stmt.setString(3, autor.livrosToJson()); // Define as informações no terceiro parâmetro
-            stmt.executeUpdate(); // Executa a inserção
-        } catch (Exception e) {
-            throw new RuntimeException("couldnt insert table into db");
+    public void inserirAutor(Autor autor) {
+        String sql = "INSERT INTO autores (nome, informacoes) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, autor.getNome());
+            stmt.setString(2, autor.getInformacoes());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
