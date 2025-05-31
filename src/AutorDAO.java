@@ -71,15 +71,15 @@ public class AutorDAO {
     }
 
     // Atualiza os dados de um autor com base no ID
-    public void atualizarAutor(Autor autor) throws SQLException {
+    public void atualizarAutor(Autor autor) {
         String sql = "UPDATE autores SET nome = ?, informacoes = ? WHERE id = ?";
-
-        // Prepara a query de atualização
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, autor.getNome()); // Novo nome
-            stmt.setString(2, autor.getInformacoes()); // Novas informações
-            stmt.setInt(3, autor.getId()); // ID do autor a ser atualizado
-            stmt.executeUpdate(); // Executa a atualização
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, autor.getNome());
+            stmt.setString(2, autor.getInformacoes());
+            stmt.setInt(3, autor.getId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     
