@@ -2,7 +2,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-<<<<<<< Updated upstream
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +96,7 @@ public class AutorView extends JFrame {
             btnAdicionar.addActionListener(e -> adicionarAutor(app));
             btnAtualizar.addActionListener(e -> listarAutores(app));
         }
-        // Chama o método que lista os autores assim que a tela abre
+
         listarAutores(app);
 
         // Define o comportamento ao fechar a janela

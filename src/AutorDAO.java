@@ -63,7 +63,7 @@ public class AutorDAO {
                             rs.getString("informacoes"),
                             livros));
                 } catch (Exception e) {
-                    throw new RuntimeException("error converting from db to object");,./´p[]
+                    throw new RuntimeException("error converting from db to object");
                       
 
                 }
