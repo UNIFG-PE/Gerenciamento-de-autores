@@ -1,12 +1,8 @@
-
 import javax.swing.*;
-
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.awt.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+<<<<<<< Updated upstream
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +31,17 @@ class TextWithButton extends JPanel {
 }
 
 // Classe de interface gráfica p/ gerenciar os autores
-public class AutorView extends JFrame {
+=======
+import java.util.List;
 
+>>>>>>> Stashed changes
+public class AutorView extends JFrame {
+    private JTextField txtNome;
+    private JTextArea txtInfo;
+    private JTable tabelaAutores;
+    private DefaultTableModel modeloTabela;
+
+<<<<<<< Updated upstream
     // Campos de texto e área de exibição
     private JTextField txtNome, txtInfo, txtLivros;
     private JPanel listPanel;
@@ -96,29 +101,46 @@ public class AutorView extends JFrame {
         listarAutores(app);
 
         // Define o comportamento ao fechar a janela
+=======
+    public AutorView() {
+        setTitle("Cadastro de Autores");
+        setSize(700, 450);
+>>>>>>> Stashed changes
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-        // Torna a janela visível
-        setVisible(true);
-    }
+        JPanel painel = new JPanel(new BorderLayout());
 
+<<<<<<< Updated upstream
     // Método que cria e salva um novo autor com os dados informados
     private void adicionarAutor(App app) {
         try {
             // Cria objeto Autor com os dados dos campos
             String jsonLivros = txtLivros.getText().trim();
+=======
+        JPanel painelEntrada = new JPanel(new GridLayout(5, 1));
+        txtNome = new JTextField();
+        txtInfo = new JTextArea(3, 20);
+        JButton btnCadastrar = new JButton("Cadastrar Autor");
+        JButton btnExcluir = new JButton("Excluir Selecionado");
+>>>>>>> Stashed changes
 
-            // Converter JSON string para String[] usando ObjectMapper
-            ObjectMapper objectMapper = new ObjectMapper();
-            String[] livros = objectMapper.readValue(jsonLivros, String[].class);
-            Autor autor = new Autor(txtNome.getText(), txtInfo.getText(), livros);
+        painelEntrada.setBorder(BorderFactory.createTitledBorder("Novo Autor"));
+        painelEntrada.add(new JLabel("Nome:"));
+        painelEntrada.add(txtNome);
+        painelEntrada.add(new JLabel("Informações:"));
+        painelEntrada.add(new JScrollPane(txtInfo));
+        painelEntrada.add(btnCadastrar);
+        painelEntrada.add(btnExcluir);
 
-            // Salva o autor no banco de dados
-            autorDAO.adicionarAutor(autor);
+        modeloTabela = new DefaultTableModel(new Object[]{"ID", "Nome", "Informações"}, 0);
+        tabelaAutores = new JTable(modeloTabela);
+        JScrollPane scrollTabela = new JScrollPane(tabelaAutores);
 
-            // Mostra mensagem de sucesso
-            JOptionPane.showMessageDialog(this, "Autor adicionado com sucesso!");
+        painel.add(painelEntrada, BorderLayout.NORTH);
+        painel.add(scrollTabela, BorderLayout.CENTER);
 
+<<<<<<< Updated upstream
             // Atualiza a lista de autores
             listarAutores(app);
         } catch (Exception e) {
@@ -156,9 +178,61 @@ public class AutorView extends JFrame {
                         + autor.getInformacoes() + livrosStr;
                 listPanel.add(new TextWithButton(this, texto, autor.getId()));
 
+=======
+        add(painel);
+
+        btnCadastrar.addActionListener(e -> {
+            String nome = txtNome.getText().trim();
+            String info = txtInfo.getText().trim();
+
+            if (nome.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Preencha o nome!");
+                return;
+>>>>>>> Stashed changes
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+            Autor autor = new Autor();
+            autor.setNome(nome);
+            autor.setInformacoes(info);
+
+            AutorDAO dao = new AutorDAO();
+            dao.inserirAutor(autor);
+
+            JOptionPane.showMessageDialog(null, "Autor cadastrado com sucesso!");
+            carregarAutores();
+            txtNome.setText("");
+            txtInfo.setText("");
+        });
+
+        btnExcluir.addActionListener(e -> {
+            int linhaSelecionada = tabelaAutores.getSelectedRow();
+            if (linhaSelecionada != -1) {
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "Tem certeza que deseja excluir o autor?",
+                        "Confirmação",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    int idAutor = (int) modeloTabela.getValueAt(linhaSelecionada, 0);
+                    AutorDAO dao = new AutorDAO();
+                    dao.excluirAutor(idAutor);
+                    carregarAutores();
+                    JOptionPane.showMessageDialog(null, "Autor excluído com sucesso.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Selecione uma linha para excluir.");
+            }
+        });
+
+        carregarAutores();
+    }
+
+    private void carregarAutores() {
+        modeloTabela.setRowCount(0);
+        AutorDAO dao = new AutorDAO();
+        List<Autor> lista = dao.listarAutores();
+        for (Autor a : lista) {
+            modeloTabela.addRow(new Object[]{a.getId(), a.getNome(), a.getInformacoes()});
         }
     }
 }
