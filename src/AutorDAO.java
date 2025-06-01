@@ -86,14 +86,13 @@ public class AutorDAO {
   
 
     // Remove um autor do banco com base no ID
-
-    public void removerAutor(int id) throws SQLException {
-        String sql = "DELETE FROM autores WHERE id = ?";
-
-        // Prepara a query de exclusão
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id); // Define o ID do autor a ser excluído
-            stmt.executeUpdate(); // Executa a exclusão
+   public void excluirAutor(int id) {
+        String sql = "UPDATE autores SET excluido = TRUE WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }
