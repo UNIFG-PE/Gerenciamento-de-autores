@@ -52,6 +52,7 @@ public class AutorView extends JFrame {
     private DefaultTableModel modeloTabela;
 
     private List<Cell> changes = new ArrayList<>();
+    private List<Autor> lista = new ArrayList<>();
 
     // Construtor da interface
     public AutorView() {
@@ -104,18 +105,29 @@ public class AutorView extends JFrame {
                         return;
                     }
                     int row = e.getFirstRow();
-                    String newValue = (String) modeloTabela.getValueAt(row, column);
-                    Cell cell = new Cell((int) modeloTabela.getValueAt(row, 0), row, column, newValue);
-                    if (!changes.contains(cell)) {
-                        changes.add(cell);
-                    } else {
-                        Cell cell2 = changes.get(changes.indexOf(cell));
-                        cell2.value = newValue;
-                    }
-                    for (Cell cel : changes) {
-                        System.out.println(cel.value);
+                    int id = (int) modeloTabela.getValueAt(row, 0);
 
+                    String newValue = (String) modeloTabela.getValueAt(row, column);
+                    for (Autor autor : lista) {
+                        if (autor.getId() == id) {
+                            if (column == 1)
+                                autor.setNome(newValue);
+                            if (column == 2)
+                                autor.setInformacoes(newValue);
+                        }
                     }
+                    // Cell cell = new Cell((int) modeloTabela.getValueAt(row, 0), row, column,
+                    // newValue);
+                    // if (!changes.contains(cell)) {
+                    // changes.add(cell);
+                    // } else {
+                    // Cell cell2 = changes.get(changes.indexOf(cell));
+                    // cell2.value = newValue;
+                    // }
+                    // for (Cell cel : changes) {
+                    // System.out.println(cel.value);
+                    //
+                    // }
 
                     System.out.println("Cell updated at row " + row + ", column " + column +
                             " with value: " + newValue);
@@ -125,7 +137,10 @@ public class AutorView extends JFrame {
 
         btnAtualizar.addActionListener(e -> {
             AutorDAO dao = new AutorDAO();
-            dao.updateAutor(changes);
+            for (Autor autor : lista) {
+                dao.atualizarAutor(autor);
+            }
+            // dao.atualizarAutores(lista);
             carregarAutores();
 
         });
@@ -183,7 +198,7 @@ public class AutorView extends JFrame {
     private void carregarAutores() {
         modeloTabela.setRowCount(0); // Limpa tabela
         AutorDAO dao = new AutorDAO();
-        List<Autor> lista = dao.listarAutores();
+        lista = dao.listarAutores();
         for (Autor a : lista) {
             modeloTabela.addRow(new Object[] { a.getId(), a.getNome(), a.getInformacoes() });
         }
