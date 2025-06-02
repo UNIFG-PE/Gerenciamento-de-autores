@@ -42,7 +42,6 @@
     <build>
         <!-- Diretório de onde o Maven vai compilar os arquivos fonte -->
         <sourceDirectory>src</sourceDirectory>
-        <testSourceDirectory>src/test</testSourceDirectory>
 
         <plugins>
             <!-- Plugin pra executar o código Java diretamente pelo Maven -->
