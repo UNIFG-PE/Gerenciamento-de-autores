@@ -9,6 +9,7 @@ public class Autor {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -17,6 +18,7 @@ public class Autor {
     public String getNome() {
         return nome;
     }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -25,6 +27,7 @@ public class Autor {
     public String getInformacoes() {
         return informacoes;
     }
+
     public void setInformacoes(String informacoes) {
         this.informacoes = informacoes;
     }

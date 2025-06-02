@@ -22,13 +22,40 @@ public class AutorDAO {
         try {
             // Conecta ao banco
             connection = DriverManager.getConnection(
-                    "jdbc:mariadb://localhost:3307/biblioteca?useSSL=false&serverTimezone=UTC",
+                    "jdbc:mariadb://localhost:3307/biblioteca",
                     "root",
                     "senha");
         } catch (SQLException e) {
             System.out.println("Erro");
             e.printStackTrace();
         }
+    }
+
+    public void updateAutor(List<Cell> cells) {
+        for (Cell cell : cells) {
+            String sql = String.format("UPDATE autores SET %s = ? WHERE id = ?", column_name(cell.column));
+            try {
+                PreparedStatement stmt = connection.prepareStatement(sql);
+
+                stmt.setString(1, cell.value);
+                stmt.setInt(2, cell.id);
+                int rowsUpdated = stmt.executeUpdate();
+
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+
+        }
+    }
+
+    public static String column_name(int column) {
+        if (column == 0)
+            return "id";
+        if (column == 1)
+            return "nome";
+        if (column == 2)
+            return "informacoes";
+        return "";
     }
 
     // Insere autor
@@ -51,6 +78,7 @@ public class AutorDAO {
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Autor autor = new Autor();
+
                 autor.setId(rs.getInt("id"));
                 autor.setNome(rs.getString("nome"));
                 autor.setInformacoes(rs.getString("informacoes"));
