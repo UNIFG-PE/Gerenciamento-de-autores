@@ -1,13 +1,17 @@
-
+// Conexão e comandos SQL
 import java.sql.*;
+// Listas de autores
 import java.util.ArrayList;
 import java.util.List;
 
+// Classe para acesso ao banco de dados
 public class AutorDAO {
     private Connection connection;
 
+    // Construtor: conecta ao banco
     public AutorDAO() {
         try {
+            // Carrega driver JDBC
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             System.out.println("Erro");
@@ -15,10 +19,11 @@ public class AutorDAO {
         }
 
         try {
+            // Conecta ao banco
             connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3307/biblioteca?useSSL=false&serverTimezone=UTC",
-                    "root",
-                    "senha"
+                "jdbc:mysql://localhost:3307/biblioteca?useSSL=false&serverTimezone=UTC",
+                "root",
+                "senha"
             );
         } catch (SQLException e) {
             System.out.println("Erro");
@@ -26,6 +31,7 @@ public class AutorDAO {
         }
     }
 
+    // Insere autor 
     public void inserirAutor(Autor autor) {
         String sql = "INSERT INTO autores (nome, informacoes) VALUES (?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -37,7 +43,7 @@ public class AutorDAO {
         }
     }
 
-    // Atualiza os dados de um autor com base no ID
+    // Lista autores ativos
     public List<Autor> listarAutores() {
         List<Autor> lista = new ArrayList<>();
         String sql = "SELECT * FROM autores WHERE excluido = FALSE";
@@ -50,7 +56,13 @@ public class AutorDAO {
                 autor.setInformacoes(rs.getString("informacoes"));
                 lista.add(autor);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
 
+    // Atualiza autor pelo ID
     public void atualizarAutor(Autor autor) {
         String sql = "UPDATE autores SET nome = ?, informacoes = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -58,15 +70,13 @@ public class AutorDAO {
             stmt.setString(2, autor.getInformacoes());
             stmt.setInt(3, autor.getId());
             stmt.executeUpdate();
-       main
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return lista;
     }
-        
-    // Remove um autor do banco com base no ID
-   public void excluirAutor(int id) {
+
+    //Exclui o autor
+    public void excluirAutor(int id) {
         String sql = "UPDATE autores SET excluido = TRUE WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -76,3 +86,4 @@ public class AutorDAO {
         }
     }
 }
+
