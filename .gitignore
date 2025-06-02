@@ -3,3 +3,5 @@ adminer*
 .settings/
 .project
 .classpath
+.init.sh
+banco_biblioteca.sql
