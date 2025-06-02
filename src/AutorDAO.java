@@ -37,41 +37,6 @@ public class AutorDAO {
         }
     }
 
-    // Retorna uma lista com todos os autores cadastrados no banco
-
-    public List<Autor> listarAutores() throws SQLException {
-        List<Autor> lista = new ArrayList<>(); // Lista q vai armazenar os autores
-        String sql = "SELECT * FROM autores"; // Consulta todos os registros da tabela
-        // rm.add(txtLivros)
-
-        // Cria um Statement pra executar a consulta
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-            // Enquanto houver resultados, cria objetos Autor e add à lista
-            while (rs.next()) {
-
-                try {
-                    String json = rs.getString("livros");
-                    System.out.println(json);
-                    if (json == null) {
-                        continue;
-                    }
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    String[] livros = objectMapper.readValue(json, String[].class);
-                    lista.add(new Autor(
-                            rs.getInt("id"),
-                            rs.getString("nome"),
-                            rs.getString("informacoes"),
-                            livros));
-                } catch (Exception e) {
-                    throw new RuntimeException("error converting from db to object");
-                      
-
-                }
-            }
-        }
-        return lista; // Retorna a lista completa de autores
-    }
-
     // Atualiza os dados de um autor com base no ID
     public List<Autor> listarAutores() {
         List<Autor> lista = new ArrayList<>();
@@ -99,9 +64,7 @@ public class AutorDAO {
         }
         return lista;
     }
-    
-  
-
+        
     // Remove um autor do banco com base no ID
    public void excluirAutor(int id) {
         String sql = "UPDATE autores SET excluido = TRUE WHERE id = ?";
