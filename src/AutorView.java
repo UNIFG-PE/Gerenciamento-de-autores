@@ -42,11 +42,11 @@ public class AutorView extends JFrame {
         // Tabela para exibir autores
         modeloTabela = new DefaultTableModel(new Object[]{"ID", "Nome", "Informações"}, 0);
         tabelaAutores = new JTable(modeloTabela);
-        JScrollPane scrollTabela = new JScrollPane(tabelaAutores);
+        JScrollPane scrollTabela = new JScrollPane(tabelaAutores); // Área de rolagem
 
         // Adiciona painéis à tela
-        painel.add(painelEntrada, BorderLayout.NORTH);
-        painel.add(scrollTabela, BorderLayout.CENTER);
+        painel.add(painelEntrada, BorderLayout.NORTH); //cima
+        painel.add(scrollTabela, BorderLayout.CENTER); //centro
         add(painel);
 
         // Ação do botão Cadastrar
