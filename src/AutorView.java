@@ -11,37 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-class Cell {
-    public int id;
-    public int row;
-    public int column;
-    public String value;
 
-    public Cell(int id, int row, int column, String value) {
-        this.id = id;
-        this.row = row;
-        this.column = column;
-        this.value = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true; // same reference
-        if (o == null || getClass() != o.getClass())
-            return false; // null or different class
-
-        Cell myData = (Cell) o;
-
-        if (row != myData.id)
-            return false;
-        if (row != myData.row)
-            return false;
-        if (column != myData.column)
-            return false;
-        return true;
-    }
-}
 
 // Janela principal do sistema
 public class AutorView extends JFrame {
@@ -51,7 +21,7 @@ public class AutorView extends JFrame {
     private JTable tabelaAutores;
     private DefaultTableModel modeloTabela;
 
-    private List<Cell> changes = new ArrayList<>();
+
     private List<Autor> lista = new ArrayList<>();
 
     // Construtor da interface
@@ -101,7 +71,6 @@ public class AutorView extends JFrame {
                     if (column == 0) {
                         JOptionPane.showMessageDialog(null, "Alterar id não suportado");
                         carregarAutores();
-                        changes = new ArrayList<>();
                         return;
                     }
                     int row = e.getFirstRow();
@@ -116,19 +85,6 @@ public class AutorView extends JFrame {
                                 autor.setInformacoes(newValue);
                         }
                     }
-                    // Cell cell = new Cell((int) modeloTabela.getValueAt(row, 0), row, column,
-                    // newValue);
-                    // if (!changes.contains(cell)) {
-                    // changes.add(cell);
-                    // } else {
-                    // Cell cell2 = changes.get(changes.indexOf(cell));
-                    // cell2.value = newValue;
-                    // }
-                    // for (Cell cel : changes) {
-                    // System.out.println(cel.value);
-                    //
-                    // }
-
                     System.out.println("Cell updated at row " + row + ", column " + column +
                             " with value: " + newValue);
                 }
