@@ -8,20 +8,23 @@ Autor {
     private int id;
     private String nome; // Nome do autor
     private String informacoes; // Informações complementares sobre o autor
+    private String nacionalidade;
     private String[] livros;
 
     // Construtor com todos os atributos (usado ao recuperar dados do banco)
-    public Autor(int id, String nome, String informacoes, String[] livros) {
+    public Autor(int id, String nome, String informacoes, String nacionalidade, String[] livros) {
         this.id = id;
         this.nome = nome;
         this.informacoes = informacoes;
+        this.nacionalidade = nacionalidade;
         this.livros = livros;
     }
 
     // Construtor sem ID (usado para adicionar novos autores)
-    public Autor(String nome, String informacoes, String[] livros) {
+    public Autor(String nome, String informacoes, String nacionalidade, String[] livros) {
         this.nome = nome;
         this.informacoes = informacoes;
+        this.nacionalidade = nacionalidade;
         this.livros = livros;
     }
 
@@ -55,6 +58,9 @@ Autor {
         return informacoes;
     }
 
+    // Retorna nacionalidade do autor
+    public String getNacionalidade() { return nacionalidade; }
+
     // Define o ID do Autor
     public void setId(int id) {
         this.id = id;
@@ -69,4 +75,7 @@ Autor {
     public void setInformacoes(String informacoes) {
         this.informacoes = informacoes;
     }
+
+    // Define a nacionalidade do autor
+    public void setNacionalidade(String nacionalidade) { this.nacionalidade = nacionalidade; }
 }

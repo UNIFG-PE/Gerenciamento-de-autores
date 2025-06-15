@@ -27,10 +27,11 @@ public class AutorDAO {
     }
 
     public void inserirAutor(Autor autor) {
-        String sql = "INSERT INTO autores (nome, informacoes) VALUES (?, ?)";
+        String sql = "INSERT INTO autores (nome, informacoes, nacionalidade) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, autor.getNome());
             stmt.setString(2, autor.getInformacoes());
+            stmt.setString(3, autor.getNacionalidade());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -45,7 +46,7 @@ public class AutorDAO {
         // rm.add(txtLivros)
 
         // Cria um Statement pra executar a consulta
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             // Enquanto houver resultados, cria objetos Autor e add à lista
             while (rs.next()) {
 
@@ -61,6 +62,7 @@ public class AutorDAO {
                             rs.getInt("id"),
                             rs.getString("nome"),
                             rs.getString("informacoes"),
+                            rs.getString("nacionalidade"),
                             livros));
                 } catch (Exception e) {
                     throw new RuntimeException("error converting from db to object");
@@ -72,11 +74,17 @@ public class AutorDAO {
 
     // Atualiza os dados de um autor com base no ID
     public void atualizarAutor(Autor autor) {
-        String sql = "UPDATE autores SET nome = ?, informacoes = ? WHERE id = ?";
+        ///  public void: É um método público, ou seja, pode ser acessado de outras classes.
+        ///
+        /// atualizarAutor: Nome do método.
+        ///
+        /// (Autor autor): Recebe como parâmetro um objeto do tipo Autor, que contém os dados que queremos atualizar no banco.
+        String sql = "UPDATE autores SET nome = ?, informacoes = ?, nacionalidade = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, autor.getNome());
             stmt.setString(2, autor.getInformacoes());
-            stmt.setInt(3, autor.getId());
+            stmt.setString(3, autor.getNacionalidade());
+            stmt.setInt(4, autor.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,7 +99,7 @@ public class AutorDAO {
         String sql = "DELETE FROM autores WHERE id = ?";
 
         // Prepara a query de exclusão
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id); // Define o ID do autor a ser excluído
             stmt.executeUpdate(); // Executa a exclusão
         }
